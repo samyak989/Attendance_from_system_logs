@@ -2,40 +2,58 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 import sqlite3
+import os
 
-conn = sqlite3.connect('Attendance_database.db')
+#location of log files
+data_path = os.path.join(os.path.dirname(__file__),'Data/logs_20200827-1619.csv')
+#location of datbase file
+database_path = os.path.join(os.path.dirname(__file__),'Database/Attendance_database.db')
+
+conn = sqlite3.connect(database_path)
 c = conn.cursor()
 
+#creating attendance table
 c.execute('CREATE TABLE ATTENDANCE (Time TEXT, User_full_name TEXT, IP_address TEXT, Roll_no INT, Course_id INT)')
 
+#reading log file
+df = pd.read_csv(data_path)
 
-df = pd.read_csv(r'C:\Users\samya\Downloads\logs_20200827-1619.csv')
-
+#Converting to datetime object
 df['Time'] = df['Time'].apply(lambda x : datetime.strptime(x, '%d/%m/%y, %H:%M'))
 
+#Only taking the rows with evntname = meting left or join
 dummy = df.loc[((df['Event name'] == 'Meeting left') | (df['Event name'] == 'Meeting joined'))]
 
-dummy['User full name'].str.findall(r'(\D+)').apply(lambda x : x[-1])
+#extracting names
+dummy['Name']=dummy['User full name'].str.findall(r'(\D+)').apply(lambda x : x[-1])
 
+#extracting roll no.
 dummy['Roll_no'] = dummy['User full name'].str.findall(r'(\d+)')
 dummy = dummy[~dummy.Roll_no.str.len().eq(0)]
 dummy['Roll_no'] = dummy['Roll_no'].apply(lambda x : x[-1])
 dummy['Roll_no'] = dummy['Roll_no'].astype('int64')
 
+#extracting course_id
 dummy['Course_id'] = dummy['Description'].str.findall(r'(\d+)').apply(lambda x : x[-1])
 dummy['Course_id'] = dummy['Course_id'].astype(int)
 
-dummy.drop(['Affected user','Event context','Component','Origin','Description','Event name'],axis=1,inplace = True)
+#dropping columns
+dummy.drop(['User full name','Affected user','Event context','Component','Origin','Description','Event name'],axis=1,inplace = True)
 
+#rearranging columns
+dummy = dummy[['Name', 'Roll_no', 'Time', 'Course_id', 'IP address']]
+
+#giving datafrme to database
 dummy.to_sql('ATTENDANCE', conn, if_exists='replace', index = False)
 
 c.execute('''  SELECT * FROM ATTENDANCE''')
 for row in c.fetchall():
     print (row)
 
+#cane used to extract roll no. wise data
 #dummy.loc[((dummy['Roll_no'] == 1803310179) & (df['Time'].dt.hour < 12))]
-a = dummy.columns
-print(a)
+
+#extracting course_id's
 classes = np.sort(dummy['Course_id'].unique())
 
 '''for sec in classes:
