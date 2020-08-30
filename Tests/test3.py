@@ -55,11 +55,14 @@ posts = [
 ]
 
 @app.route("/")
-@app.route("/home")
-def home():
+@app.route("/home/<rollNo>")
+def home(rollNo= ''):
+    if rollNo == '':
+        return redirect(url_for('login'))
+    
     conn = sqlite3.connect('Attendance_database.db')
     c = conn.cursor()
-    c.execute("SELECT * FROM ATTENDANCE WHERE Roll_no = '1803310068'")
+    c.execute("SELECT * FROM ATTENDANCE WHERE Roll_no = '"+str(rollNo)+"'")
 
     records = c.fetchmany(500)
 
@@ -78,9 +81,9 @@ def about():
 def login():
     form = RollNoForm()
     if form.validate_on_submit():
-        if form.rollNo.data == '1803310068':
-            flash(f'Login successful for user: {form.rollNo.data}', 'success')
-            return redirect(url_for('home'))
+        if form.rollNo.data != None:
+            flash(f'Login successful for roll no: {form.rollNo.data}', 'success')
+            return redirect(url_for('home', rollNo = form.rollNo.data))
         else:
             flash('Login unsuccessful. Check roll no.', 'danger')
     return render_template('login.html', title= 'Login', form= form)

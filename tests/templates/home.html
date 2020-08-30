@@ -1,14 +1,24 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <div class= "jumbotron text-center">
-        <h1>{{records[0][1]}}</h1>
+    <div class= "jumbotron p-4">
+        <h1>{{ records[0][1] }}</h1>
+        <p>{{ records[0][3] }}</p>
     </div>
-    {% for record in records %}
-        <div class="card mb-4 p-2">
-            <h1>{{record[-1]}}</h1>
-            <p>By {{record[1]}} on {{record[0]}}</p>
-            <p>{{record[-2]}}</p>
-        </div>
-    {% endfor %}
+    <div class="card">
+    <table class= "table">
+        <thead>
+        <tr>
+            <th>Date/Time</th>
+            <th>Subject ID</th>
+        </tr>
+        </thead>
+        {% for record in records %}
+            <tr>
+                <th>{{ record[0] }}</th>
+                <th>{{ record[-1] }}</th>
+            </tr>
+        {% endfor %}
+    </table>
+    </div>
 {% endblock content %}
