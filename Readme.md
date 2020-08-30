@@ -5,3 +5,4 @@ An application to read data logs from rkgitlms.in and calculate students attenda
 1. flask
 2. pandas
 3. numpy
+4. datetime
