@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class= "jumbotron">
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            
+            <fieldset class= "form-group">
+                <legend class= "border-bottom mb-4">Student Login</legend>
+                <div class= "form-group">
+                    {{ form.rollNo.label(class= "form-control-label") }}
+                    {% if form.rollNo.errors %}
+                        {{ form.rollNo(class= "form-control form-control-lg is-invalid") }}
+                        <div class= "invalid-feedback">
+                            {% for error in form.rollNo.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.rollNo(class= "form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-check">
+                    {{ form.remember(class= "form-check-input") }}
+                    {{ form.remember.label(class= "form-check-label") }}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class= "btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>
+{% endblock content %}
