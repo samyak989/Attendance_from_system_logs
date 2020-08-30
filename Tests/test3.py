@@ -1,6 +1,7 @@
 from flask import Flask, render_template, url_for, flash, redirect
 from flask_sqlalchemy import SQLAlchemy
 from forms import RollNoForm
+import sqlite3
 
 app = Flask(__name__)
 
@@ -56,7 +57,16 @@ posts = [
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template('home.html', posts= posts)
+    conn = sqlite3.connect('Attendance_database.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM ATTENDANCE WHERE Roll_no = '1803310068'")
+
+    records = c.fetchmany(500)
+
+    for record in records:
+        print(record)
+    
+    return render_template('home.html', records= records)
 
 
 @app.route("/about")

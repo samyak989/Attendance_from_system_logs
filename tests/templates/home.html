@@ -2,13 +2,13 @@
 
 {% block content %}
     <div class= "jumbotron text-center">
-        <h1>Home</h1>
+        <h1>{{records[0][1]}}</h1>
     </div>
-    {% for post in posts %}
-        <div class="card promoting-card mb-4">
-            <h1>{{post.title}}</h1>
-            <p>By {{post.author}} on {{post.date}}</p>
-            <p>{{post.content}}</p>
+    {% for record in records %}
+        <div class="card mb-4 p-2">
+            <h1>{{record[-1]}}</h1>
+            <p>By {{record[1]}} on {{record[0]}}</p>
+            <p>{{record[-2]}}</p>
         </div>
     {% endfor %}
 {% endblock content %}

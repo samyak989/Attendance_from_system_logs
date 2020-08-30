@@ -1,7 +1,9 @@
 from flask import render_template, url_for, flash, redirect
-from AttendanceApp import app
-from AttendanceApp.forms import RollNoForm
+from AttendanceApp import app, db, bcrypt
+from AttendanceApp.forms import RollNoForm, AdminForm
 from AttendanceApp.models import Student, Attendance
+
+hashed_admin_password = '$2b$12$gM2Do7SJHqWjWaNcgOnlNOCaPjJ7oi7RHnmNOITFqhPDyzkIqsCSK' 
 
 posts = [
     {
@@ -45,3 +47,14 @@ def login():
         else:
             flash('Login unsuccessful. Check roll no.', 'danger')
     return render_template('login.html', title= 'Login', form= form)
+
+@app.route("/admin_login", methods=['GET', 'POST'])
+def admin_login():
+    form = AdminForm()
+
+    if form.validate_on_submit():
+        if form.username.data == 'Ligma' and bcrypt.check_password_hash(hashed_admin_password, form.password.data):
+            flash(f'Admin login for user: {form.username.data}', 'success')
+            return redirect(url_for('home'))
+
+    return render_template('adminLogin.html', title= 'Admin Login', form= form)
