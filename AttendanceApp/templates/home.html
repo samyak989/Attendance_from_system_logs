@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class= "jumbotron text-center">
+        <h1>Home</h1>
+    </div>
+    {% for post in posts %}
+        <div class="card promoting-card mb-4">
+            <h1>{{post.title}}</h1>
+            <p>By {{post.author}} on {{post.date}}</p>
+            <p>{{post.content}}</p>
+        </div>
+    {% endfor %}
+{% endblock content %}
