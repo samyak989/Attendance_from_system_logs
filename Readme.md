@@ -8,3 +8,4 @@ An application to read data logs from rkgitlms.in and calculate students attenda
 4. flask
 5. flask-wtf
 6. flask-sqlalchemy
+7. flask-bcrypt
