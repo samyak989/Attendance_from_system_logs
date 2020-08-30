@@ -41,17 +41,21 @@ dummy['Roll_no'] = dummy['Roll_no'].astype('int64')
 dummy['Course_id'] = dummy['Description'].str.findall(r'(\d+)').apply(lambda x : x[-1])
 dummy['Course_id'] = dummy['Course_id'].astype(int)
 
-#extracting date
-dummy['Date']=dummy['Time'].dt.date
-
+#extracting date and time
+dummy['Year'] = dummy['Time'].dt.year
+dummy['Month'] = dummy['Time'].dt.month
+dummy['Day'] = dummy['Time'].dt.day
+dummy['Hour'] = dummy['Time'].dt.hour
+dummy['Minute'] = dummy['Time'].dt.minute
 #extracting time
-dummy['Time']=dummy['Time'].dt.time
+#dummy['Time']=dummy['Time'].dt.time
 
 #dropping columns
 dummy.drop(['User full name','Affected user','Event context','Component','Origin','Description','Event name'],axis=1,inplace = True)
 
+#dummy = dummy.groupby(df['Roll_no']).aggregate({'Name':'first', 'Month':'first', 'Day':'first', 'Hour':'first','Minute':'first', 'Course_id':'first', 'IP address':'first'})
 #rearranging columns
-dummy = dummy[['Name', 'Roll_no', 'Date', 'Time', 'Course_id', 'IP address']]
+dummy = dummy[['Name', 'Roll_no','Year', 'Month', 'Day', 'Hour','Minute', 'Course_id', 'IP address']]
 
 #giving datafrme to database
 dummy.to_sql('ATTENDANCE', conn, if_exists='replace', index = False)
