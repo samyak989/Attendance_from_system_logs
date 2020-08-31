@@ -1,3 +1,4 @@
 
 Tests/__pycache__/forms.cpython-37.pyc
 AttendanceApp/__pycache__/routes.cpython-37.pyc
+*.pyc
