@@ -4,6 +4,9 @@ from datetime import datetime
 import sqlite3
 import os
 
+class_starttime = 10
+class_endtime = 17
+
 #location of log files
 data_path = os.path.join(os.path.dirname(__file__),'Data')
 #data_path = os.path.join(os.path.dirname(__file__),'Data/logs_20200827-1619.csv') #for taking path of one fie
@@ -18,7 +21,6 @@ c = conn.cursor()
 #creating attendance table
 c.execute('CREATE TABLE ATTENDANCE (Time TEXT, User_full_name TEXT, IP_address TEXT, Roll_no INT, Course_id INT)')
 
-
 #reading log file
 files_list = os.listdir(data_path)
 df = pd.concat([pd.read_csv(os.path.join(data_path,f)) for f in files_list])
@@ -28,7 +30,7 @@ df = pd.concat([pd.read_csv(os.path.join(data_path,f)) for f in files_list])
 df['Time'] = df['Time'].apply(lambda x : datetime.strptime(x, '%d/%m/%y, %H:%M'))
 
 #Only taking the rows with evntname = meting left or join
-dummy = df.loc[(df['Component'] == 'BigBlueButtonBN')]
+dummy = df.loc[((df['Component'] == 'BigBlueButtonBN'))]
 
 #extracting roll no.
 dummy['Roll_no'] = dummy['User full name'].str.findall(r'(\d+)')
@@ -58,31 +60,27 @@ dummy.drop(['User full name','Affected user','Event context','Component','Origin
 
 #extracting sec id's's
 classes = np.sort(dummy['Course_id'].unique())
-
+dates = np.sort(dummy['Time'].dt.date.unique())
 #removing the duplicate rows in same hour
 final = pd.DataFrame()
 for sec in classes:
-    for low_interval in range(10,17):
-        temp = dummy.loc[((dummy['Course_id'] == sec) & (dummy['Time'].dt.hour < (low_interval+1)) &
-                       (dummy['Time'].dt.hour >= low_interval))]
-        temp.drop_duplicates(subset ="Name", 
-                     keep = 'first', inplace = True)
-        if low_interval == 13:
-            continue
-        if temp.empty == False:
-            final = final.append(temp,ignore_index=True)
+    for date in dates:
+        for low_interval in range(class_starttime,class_endtime):
+            temp = dummy.loc[((dummy['Course_id'] == sec) & (dummy['Time'].dt.hour < (low_interval+1)) &
+                           (dummy['Time'].dt.hour >= low_interval) & (dummy['Time'].dt.date == date))]
+            temp.drop_duplicates(subset ="Name", keep = 'first', inplace = True)
+            if low_interval == 13:
+                continue
+            if len(temp) != 0:
+                final = final.append(temp,ignore_index=True)
 final.reset_index(drop=True,inplace= True)
-
 #providing datafrme to database
 final.to_sql('ATTENDANCE', conn, if_exists='replace', index = True)
 
 #query
-#c.execute('''  SELECT * FROM ATTENDANCE''')
+#c.execute('''  SELECT * FROM ATTENDANCE WHERE Roll_no = 1803310178''')
 #for row in c.fetchall():
     #print(row)
-
-#can be used to extract roll no. wise data
-#dummy.loc[((dummy['Roll_no'] == 1803310179) & (df['Time'].dt.hour < 12))]
 
 #for printing dataframe
 '''classes = np.sort(dummy['Course_id'].unique())
