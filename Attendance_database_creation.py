@@ -28,7 +28,7 @@ df = pd.concat([pd.read_csv(os.path.join(data_path,f)) for f in files_list])
 df['Time'] = df['Time'].apply(lambda x : datetime.strptime(x, '%d/%m/%y, %H:%M'))
 
 #Only taking the rows with evntname = meting left or join
-dummy = df.loc[((df['Event name'] == 'Meeting left') | (df['Event name'] == 'Meeting joined'))]
+dummy = df.loc[(df['Component'] == 'BigBlueButtonBN')]
 
 #extracting roll no.
 dummy['Roll_no'] = dummy['User full name'].str.findall(r'(\d+)')
@@ -79,7 +79,7 @@ final.to_sql('ATTENDANCE', conn, if_exists='replace', index = True)
 #query
 #c.execute('''  SELECT * FROM ATTENDANCE''')
 #for row in c.fetchall():
-    #print (row)
+    #print(row)
 
 #can be used to extract roll no. wise data
 #dummy.loc[((dummy['Roll_no'] == 1803310179) & (df['Time'].dt.hour < 12))]
