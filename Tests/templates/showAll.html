@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class= "jumbotron p-4">
+        {% if records|length > 0: %}
+            <h1>All Records for ClassID: {{ records[0][5] }}</h1>
+            <p>on {{ records[0][8] }}-{{ records[0][7] }}-{{ records[0][6] }}</p>
+        {% else %}
+            <h1>Nothing to show</h1>
+            <p>Fill search form to view records</p>
+        {% endif %}
+
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            
+            <fieldset class= "form-group">
+                
+                <legend class= "border-bottom mb-4">Search Records</legend>
+                
+                <div class= "form-group">
+                    {{ form.classID.label(class= "form-control-label") }}
+                    {% if form.classID.errors %}
+                        {{ form.classID(class= "form-control form-control-lg is-invalid") }}
+                        <div class= "invalid-feedback">
+                            {% for error in form.classID.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.classID(class= "form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class= "form-group">
+                    {{ form.date(class= "datepicker") }}
+                </div>
+
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class= "btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>
+    <div class="card p-2">
+    <table class= "table" data-toggle= "table" data-search= "true">
+        <thead class= "thead-light p-2">
+        <tr>
+            <th>Name</th>
+            <th>Roll No</th>
+            <th>Time</th>
+        </tr>
+        </thead>
+        {% for record in records %}
+            <tr>
+                <th>{{ record[4] }}</th>
+                <th>{{ record[3] }}</th>
+                <th>{{ record[-2] }}:{{ record[-1] }}</th>
+            </tr>
+        {% endfor %}
+    </table>
+    </div>
+{% endblock content %}
