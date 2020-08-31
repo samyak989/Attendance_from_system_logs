@@ -28,14 +28,14 @@ df['Time'] = df['Time'].apply(lambda x : datetime.strptime(x, '%d/%m/%y, %H:%M')
 #Only taking the rows with evntname = meting left or join
 dummy = df.loc[((df['Event name'] == 'Meeting left') | (df['Event name'] == 'Meeting joined'))]
 
-#extracting names
-dummy['Name']=dummy['User full name'].str.findall(r'(\D+)').apply(lambda x : x[-1])
-
 #extracting roll no.
 dummy['Roll_no'] = dummy['User full name'].str.findall(r'(\d+)')
 dummy = dummy[~dummy.Roll_no.str.len().eq(0)]
 dummy['Roll_no'] = dummy['Roll_no'].apply(lambda x : x[-1])
 dummy['Roll_no'] = dummy['Roll_no'].astype('int64')
+
+#extracting names
+dummy['Name']=dummy['User full name'].str.findall(r'(\D+)').apply(lambda x : x[-1])
 
 #extracting course_id
 dummy['Course_id'] = dummy['Description'].str.findall(r'(\d+)').apply(lambda x : x[-1])
@@ -55,10 +55,26 @@ dummy.drop(['User full name','Affected user','Event context','Component','Origin
 
 #dummy = dummy.groupby(df['Roll_no']).aggregate({'Name':'first', 'Month':'first', 'Day':'first', 'Hour':'first','Minute':'first', 'Course_id':'first', 'IP address':'first'})
 #rearranging columns
-dummy = dummy[['Name', 'Roll_no','Year', 'Month', 'Day', 'Hour','Minute', 'Course_id', 'IP address']]
+#dummy = dummy[['Name', 'Roll_no','Year', 'Month', 'Day', 'Hour','Minute', 'Course_id', 'IP address']]
 
+
+classes = np.sort(dummy['Course_id'].unique())
+final = pd.DataFrame()
+for sec in classes:
+    for low_interval in range(10,17):
+        a = dummy.loc[((dummy['Course_id'] == sec) & (dummy['Time'].dt.hour < (low_interval+1)) &
+                       (dummy['Time'].dt.hour >= low_interval))]
+        #a =a.groupby(df['User full name']).aggregate({'Name':'first','Roll_no':'first', 'Month':'first', 'Day':'first', 'Hour':'first','Minute':'first', 'Course_id':'first','IP address':'first'})
+        a.drop_duplicates(subset ="Name", 
+                     keep = 'first', inplace = True)
+        if low_interval == 13:
+            continue
+        if a.empty == False:
+            final = final.append(a,ignore_index=True)
+            
+final.reset_index(drop=True,inplace= True)
 #giving datafrme to database
-dummy.to_sql('ATTENDANCE', conn, if_exists='replace', index = False)
+final.to_sql('ATTENDANCE', conn, if_exists='replace', index = True)
 
 c.execute('''  SELECT * FROM ATTENDANCE''')
 for row in c.fetchall():
@@ -68,16 +84,17 @@ for row in c.fetchall():
 #dummy.loc[((dummy['Roll_no'] == 1803310179) & (df['Time'].dt.hour < 12))]
 
 #extracting course_id's
-classes = np.sort(dummy['Course_id'].unique())
+'''classes = np.sort(dummy['Course_id'].unique())
 
-'''for sec in classes:
+for sec in classes:
     for low_interval in range(10,17):
         a = dummy.loc[((dummy['Course_id'] == sec) & (dummy['Time'].dt.hour < (low_interval+1)) &
                        (dummy['Time'].dt.hour >= low_interval))]#['User full name'].unique()
-        a =a.groupby(df['User full name']).aggregate({'Roll_no':'first','Time':'first'})
+        a =a.groupby(df['Name']).aggregate({'Roll_no':'first', 'Month':'first', 'Day':'first', 'Hour':'first','Minute':'first', 'Course_id':'first', 'IP address':'first'})
         if low_interval == 13:
             continue
         if len(a)>0:
+            pd.concat([a])
             print(sec)
             print(low_interval,"-",low_interval+1)
             print(a)
