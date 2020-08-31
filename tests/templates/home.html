@@ -2,8 +2,8 @@
 
 {% block content %}
     <div class= "jumbotron p-4">
-        <h1>{{ records[0][0] }}</h1>
-        <p>{{ records[0][1] }}</p>
+        <h1>{{ records[0][4] }}</h1>
+        <p>{{ records[0][3] }}</p>
     </div>
     <div class="card p-2">
     <table class= "table" data-toggle= "table" data-search= "true">
@@ -16,9 +16,9 @@
         </thead>
         {% for record in records %}
             <tr>
-                <th>{{ record[2] }}-{{ record[3] }}-{{ record[4] }}</th>
-                <th>{{ record[5] }}:{{ record[6] }}</th>
-                <th>{{ record[7] }}</th>
+                <th>{{ record[8] }}-{{ record[7] }}-{{ record[6] }}</th>
+                <th>{{ record[-2] }}:{{ record[-1] }}</th>
+                <th>{{ record[5] }}</th>
             </tr>
         {% endfor %}
     </table>
