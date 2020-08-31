@@ -2,8 +2,13 @@
 
 {% block content %}
     <div class= "jumbotron p-4">
+        {% if records|length > 0: %}
         <h1>{{ records[0][4] }}</h1>
         <p>{{ records[0][3] }}</p>
+        {% else %}
+        <h1>Record not found</h1>
+        <p>Try entering a valid roll no. or contact the admin.</p>
+        {% endif %}
     </div>
     <div class="card p-2">
     <table class= "table" data-toggle= "table" data-search= "true">
