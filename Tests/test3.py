@@ -97,7 +97,6 @@ def login():
     form = RollNoForm()
     if form.validate_on_submit():
         if form.rollNo.data != None:
-            flash(f'Login successful for roll no: {form.rollNo.data}', 'success')
             return redirect(url_for('home', rollNo = form.rollNo.data))
         else:
             flash('Login unsuccessful. Check roll no.', 'danger')
