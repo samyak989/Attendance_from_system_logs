@@ -6,10 +6,12 @@ import os
 
 #location of log files
 data_path = os.path.join(os.path.dirname(__file__),'Data')
-#data_path = os.path.join(os.path.dirname(__file__),'Data/logs_20200827-1619.csv')
+#data_path = os.path.join(os.path.dirname(__file__),'Data/logs_20200827-1619.csv') #for taking path of one fie
+
 #location of datbase file
 database_path = os.path.join(os.path.dirname(__file__),'Database/Attendance_database.db')
 
+#initializing sqlite
 conn = sqlite3.connect(database_path)
 c = conn.cursor()
 
@@ -20,7 +22,7 @@ c.execute('CREATE TABLE ATTENDANCE (Time TEXT, User_full_name TEXT, IP_address T
 #reading log file
 files_list = os.listdir(data_path)
 df = pd.concat([pd.read_csv(os.path.join(data_path,f)) for f in files_list])
-#df = pd.read_csv(data_path)
+#df = pd.read_csv(data_path)    #for reaing single file
 
 #Converting to datetime object
 df['Time'] = df['Time'].apply(lambda x : datetime.strptime(x, '%d/%m/%y, %H:%M'))
@@ -47,43 +49,42 @@ dummy['Month'] = dummy['Time'].dt.month
 dummy['Day'] = dummy['Time'].dt.day
 dummy['Hour'] = dummy['Time'].dt.hour
 dummy['Minute'] = dummy['Time'].dt.minute
+
 #extracting time
 #dummy['Time']=dummy['Time'].dt.time
 
 #dropping columns
 dummy.drop(['User full name','Affected user','Event context','Component','Origin','Description','Event name'],axis=1,inplace = True)
 
-#dummy = dummy.groupby(df['Roll_no']).aggregate({'Name':'first', 'Month':'first', 'Day':'first', 'Hour':'first','Minute':'first', 'Course_id':'first', 'IP address':'first'})
-#rearranging columns
-#dummy = dummy[['Name', 'Roll_no','Year', 'Month', 'Day', 'Hour','Minute', 'Course_id', 'IP address']]
-
-
+#extracting sec id's's
 classes = np.sort(dummy['Course_id'].unique())
+
+#removing the duplicate rows in same hour
 final = pd.DataFrame()
 for sec in classes:
     for low_interval in range(10,17):
-        a = dummy.loc[((dummy['Course_id'] == sec) & (dummy['Time'].dt.hour < (low_interval+1)) &
+        temp = dummy.loc[((dummy['Course_id'] == sec) & (dummy['Time'].dt.hour < (low_interval+1)) &
                        (dummy['Time'].dt.hour >= low_interval))]
-        #a =a.groupby(df['User full name']).aggregate({'Name':'first','Roll_no':'first', 'Month':'first', 'Day':'first', 'Hour':'first','Minute':'first', 'Course_id':'first','IP address':'first'})
-        a.drop_duplicates(subset ="Name", 
+        temp.drop_duplicates(subset ="Name", 
                      keep = 'first', inplace = True)
         if low_interval == 13:
             continue
-        if a.empty == False:
-            final = final.append(a,ignore_index=True)
-            
+        if temp.empty == False:
+            final = final.append(temp,ignore_index=True)
 final.reset_index(drop=True,inplace= True)
-#giving datafrme to database
+
+#providing datafrme to database
 final.to_sql('ATTENDANCE', conn, if_exists='replace', index = True)
 
-c.execute('''  SELECT * FROM ATTENDANCE''')
-for row in c.fetchall():
-    print (row)
+#query
+#c.execute('''  SELECT * FROM ATTENDANCE''')
+#for row in c.fetchall():
+    #print (row)
 
-#cane used to extract roll no. wise data
+#can be used to extract roll no. wise data
 #dummy.loc[((dummy['Roll_no'] == 1803310179) & (df['Time'].dt.hour < 12))]
 
-#extracting course_id's
+#for printing dataframe
 '''classes = np.sort(dummy['Course_id'].unique())
 
 for sec in classes:
