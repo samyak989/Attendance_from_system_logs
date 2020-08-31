@@ -1,6 +1,6 @@
 from flask import Flask, render_template, url_for, flash, redirect
 from flask_sqlalchemy import SQLAlchemy
-from forms import RollNoForm
+from forms import RollNoForm, SearchForm
 import sqlite3
 
 app = Flask(__name__)
@@ -55,18 +55,15 @@ posts = [
 ]
 
 @app.route("/")
+@app.route("/home")
 @app.route("/home/<rollNo>")
 def home(rollNo= ''):
     if rollNo == '':
         return redirect(url_for('login'))
-    elif rollNo == 'all':
-        conn = sqlite3.connect('Attendance_database.db')
-        c = conn.cursor()
-        c.execute("SELECT * FROM ATTENDANCE")
-    else:
-        conn = sqlite3.connect('Attendance_database.db')
-        c = conn.cursor()
-        c.execute("SELECT * FROM ATTENDANCE WHERE Roll_no = '"+str(rollNo)+"'")
+    
+    conn = sqlite3.connect('Attendance_database.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM ATTENDANCE WHERE Roll_no = '"+str(rollNo)+"'")
 
     records = c.fetchmany(500)
 
@@ -74,6 +71,20 @@ def home(rollNo= ''):
         print(record)
     
     return render_template('home.html', records= records)
+
+@app.route("/show_all", methods= ['GET', 'POST'])
+def show_all():
+    form = SearchForm()
+    records = []
+    if form.validate_on_submit():
+                
+        conn = sqlite3.connect('Attendance_database.db')
+        c = conn.cursor()
+        c.execute(f"SELECT * FROM ATTENDANCE WHERE course_id = {form.classID.data} AND day = {form.date.data.day} AND month = {form.date.data.month} AND year = {form.date.data.year};")
+        
+        records = c.fetchall()
+
+    return render_template('showAll.html', title= 'All Records', records= records, form= form)
 
 
 @app.route("/about")
