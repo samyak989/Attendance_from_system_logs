@@ -59,10 +59,14 @@ posts = [
 def home(rollNo= ''):
     if rollNo == '':
         return redirect(url_for('login'))
-    
-    conn = sqlite3.connect('Attendance_database.db')
-    c = conn.cursor()
-    c.execute("SELECT * FROM ATTENDANCE WHERE Roll_no = '"+str(rollNo)+"'")
+    elif rollNo == 'all':
+        conn = sqlite3.connect('Attendance_database.db')
+        c = conn.cursor()
+        c.execute("SELECT * FROM ATTENDANCE")
+    else:
+        conn = sqlite3.connect('Attendance_database.db')
+        c = conn.cursor()
+        c.execute("SELECT * FROM ATTENDANCE WHERE Roll_no = '"+str(rollNo)+"'")
 
     records = c.fetchmany(500)
 

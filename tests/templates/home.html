@@ -2,21 +2,23 @@
 
 {% block content %}
     <div class= "jumbotron p-4">
-        <h1>{{ records[0][1] }}</h1>
-        <p>{{ records[0][3] }}</p>
+        <h1>{{ records[0][0] }}</h1>
+        <p>{{ records[0][1] }}</p>
     </div>
-    <div class="card">
-    <table class= "table">
-        <thead>
+    <div class="card p-2">
+    <table class= "table" data-toggle= "table" data-search= "true">
+        <thead class= "thead-light p-2">
         <tr>
-            <th>Date/Time</th>
-            <th>Subject ID</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Class ID</th>
         </tr>
         </thead>
         {% for record in records %}
             <tr>
-                <th>{{ record[0] }}</th>
-                <th>{{ record[-1] }}</th>
+                <th>{{ record[2] }}-{{ record[3] }}-{{ record[4] }}</th>
+                <th>{{ record[5] }}:{{ record[6] }}</th>
+                <th>{{ record[7] }}</th>
             </tr>
         {% endfor %}
     </table>
