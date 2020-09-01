@@ -11,8 +11,10 @@ class RollNoForm(FlaskForm):
     submit = SubmitField('Login')
 
 class SearchForm(FlaskForm):
-    classID = StringField('Class ID', validators=[DataRequired(), Length(min=1, max=2)])
-
     date = DateField('Date', format= '%Y-%m-%d', validators=[DataRequired()])
 
     submit = SubmitField('Show Records')
+
+class DownloadForm(FlaskForm):
+
+    submit = SubmitField('Download Form')

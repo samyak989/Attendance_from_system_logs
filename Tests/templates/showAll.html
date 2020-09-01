@@ -2,9 +2,9 @@
 
 {% block content %}
     <div class= "jumbotron p-4">
-        {% if records|length > 0: %}
-            <h1>All Records for ClassID: {{ records[0][5] }}</h1>
-            <p>on {{ records[0][8] }}-{{ records[0][7] }}-{{ records[0][6] }}</p>
+        {% if records|length > 0 %}
+            <h1>All Records for {{ records[0][9] }}-{{ records[0][8] }}-{{ records[0][7] }}</h1>
+            <p>RKGIT Attendance</p>
         {% else %}
             <h1>Nothing to show</h1>
             <p>Fill search form to view records</p>
@@ -12,32 +12,21 @@
 
         <form action="" method="post">
             {{ form.hidden_tag() }}
+            {{ downloadForm.hidden_tag() }}
             
             <fieldset class= "form-group">
                 
                 <legend class= "border-bottom mb-4">Search Records</legend>
-                
-                <div class= "form-group">
-                    {{ form.classID.label(class= "form-control-label") }}
-                    {% if form.classID.errors %}
-                        {{ form.classID(class= "form-control form-control-lg is-invalid") }}
-                        <div class= "invalid-feedback">
-                            {% for error in form.classID.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.classID(class= "form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-
                 <div class= "form-group">
                     {{ form.date(class= "datepicker") }}
                 </div>
 
             </fieldset>
             <div class="form-group">
-                {{ form.submit(class= "btn btn-outline-info") }}
+                {{ form.submit(class= "btn btn-outline-primary") }}
+                {% if records|length > 0 %}
+                {{ downloadForm.submit(class= "btn btn-outline-primary") }}
+                {% endif %}
             </div>
         </form>
     </div>
@@ -47,14 +36,70 @@
         <tr>
             <th>Name</th>
             <th>Roll No</th>
+            <th>Class</th>
             <th>Time</th>
+            <th>Duration</th>
         </tr>
         </thead>
         {% for record in records %}
             <tr>
+                <th>{{ record[5] }}</th>
                 <th>{{ record[4] }}</th>
-                <th>{{ record[3] }}</th>
-                <th>{{ record[-2] }}:{{ record[-1] }}</th>
+                {% if record[6] == 29 %}
+                <th>CSE 4(C+D)</th>
+                {% elif record[6] == 28 %}
+                <th>CSE 4D</th>
+                {% elif record[6] == 27 %}
+                <th>CSE 4C</th>
+                {% elif record[6] == 32 %}
+                <th>CSE 4(A+B) 1</th>
+                {% elif record[6] == 30 %}
+                <th>CSE 4(A+B)</th>
+                {% elif record[6] == 26 %}
+                <th>CSE 4B</th>
+                {% elif record[6] == 25 %}
+                <th>CSE 4A</th>
+                {% elif record[6] == 31 %}
+                <th>CSE 3(C+D) 1</th>
+                {% elif record[6] == 24 %}
+                <th>CSE 3(C+D)</th>
+                {% elif record[6] == 22 %}
+                <th>CSE 3D</th>
+                {% elif record[6] == 21 %}
+                <th>CSE 3C</th>
+                {% elif record[6] == 60 %}
+                <th>CSE 3(A+B) 1</th>
+                {% elif record[6] == 23 %}
+                <th>CSE 3(A+B)</th>
+                {% elif record[6] == 20 %}
+                <th>CSE 3B</th>
+                {% elif record[6] == 19 %}
+                <th>CSE 3A</th>
+                {% elif record[6] == 18 %}
+                <th>CSE 2(C+D)</th>
+                {% elif record[6] == 16 %}
+                <th>CSE 2D</th>
+                {% elif record[6] == 15 %}
+                <th>CSE 2C</th>
+                {% elif record[6] == 17 %}
+                <th>CSE 2(A+B)</th>
+                {% elif record[6] == 14 %}
+                <th>CSE 2B</th>
+                {% elif record[6] == 13 %}
+                <th>CSE 2A</th>
+                {% elif record[6] == 122 %}
+                <th>ME 3C</th>
+                {% elif record[6] == 118 %}
+                <th>ME 3A</th>
+                {% elif record[6] == 33 %}
+                <th>CE 2A</th>
+                {% elif record[6] == 39 %}
+                <th>IT 2A</th>
+                {% else %}
+                <th>Course ID: {{ record[6] }}</th>
+                {% endif %}
+                <th>{{ record[10] }}:{{ record[11] }}</th>
+                <th>{{ record[-1] }}</th>
             </tr>
         {% endfor %}
     </table>

@@ -1,6 +1,6 @@
 from flask import Flask, render_template, url_for, flash, redirect
 from flask_sqlalchemy import SQLAlchemy
-from forms import RollNoForm, SearchForm
+from forms import RollNoForm, SearchForm, DownloadForm
 import sqlite3
 
 app = Flask(__name__)
@@ -75,16 +75,23 @@ def home(rollNo= ''):
 @app.route("/show_all", methods= ['GET', 'POST'])
 def show_all():
     form = SearchForm()
+    downloadForm = DownloadForm()
+    conn = sqlite3.connect('Attendance_database.db')
+    c = conn.cursor()
     records = []
+    
     if form.validate_on_submit():
-                
-        conn = sqlite3.connect('Attendance_database.db')
-        c = conn.cursor()
-        c.execute(f"SELECT * FROM ATTENDANCE WHERE course_id = {form.classID.data} AND day = {form.date.data.day} AND month = {form.date.data.month} AND year = {form.date.data.year};")
+        print(f'Form submitted. Retrieving data for {form.date.data}.')
+        
+        c.execute(f"SELECT * FROM ATTENDANCE WHERE day = {form.date.data.day} AND month = {form.date.data.month} AND year = {form.date.data.year};")
         
         records = c.fetchall()
-
-    return render_template('showAll.html', title= 'All Records', records= records, form= form)
+        print('Fetch_all result')
+        for record in records:
+            print(record)
+        print('Records fetched of length: '+str(len(records)))
+    print('sending new page')
+    return render_template('showAll.html', title= 'All Records', records= records, form= form, downloadForm= downloadForm)
 
 
 @app.route("/about")
