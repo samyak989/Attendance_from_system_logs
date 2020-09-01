@@ -83,7 +83,7 @@ def show_all():
     if form.validate_on_submit():
         print(f'Form submitted. Retrieving data for {form.date.data}.')
         
-        c.execute(f"SELECT * FROM ATTENDANCE WHERE day = {form.date.data.day} AND month = {form.date.data.month} AND year = {form.date.data.year};")
+        c.execute(f"SELECT * FROM ATTENDANCE WHERE day = {form.date.data.day} AND month = {form.date.data.month} AND year = {form.date.data.year} AND (hour >= {form.fromTime.data.hour} AND minute >= {form.fromTime.data.minute}) AND (hour <= {form.toTime.data.hour} AND minute <= {form.toTime.data.minute});")
         
         records = c.fetchall()
         print('Fetch_all result')
