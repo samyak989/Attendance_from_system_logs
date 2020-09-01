@@ -30,7 +30,8 @@ df = pd.concat([pd.read_csv(os.path.join(data_path,f)) for f in files_list])
 df['Time'] = df['Time'].apply(lambda x : datetime.strptime(x, '%d/%m/%y, %H:%M'))
 
 #Only taking the rows with evntname = meting left or join
-dummy = df.loc[((df['Component'] == 'BigBlueButtonBN'))]
+dummy = df.loc[((df['Event name'] == 'Meeting left') | (df['Event name'] == 'Meeting joined') | (df['Event name'] == 'Activity viewed'))]
+dummy.loc[(dummy['Event name'] == 'Activity viewed', 'Event name')] = 'Meeting joined'
 
 #extracting roll no.
 dummy['Roll_no'] = dummy['User full name'].str.findall(r'(\d+)')
@@ -56,7 +57,7 @@ dummy['Minute'] = dummy['Time'].dt.minute
 #dummy['Time']=dummy['Time'].dt.time
 
 #dropping columns
-dummy.drop(['User full name','Affected user','Event context','Component','Origin','Description','Event name'],axis=1,inplace = True)
+dummy.drop(['User full name','Affected user','Event context','Component','Origin','Description'],axis=1,inplace = True)
 
 #extracting sec id's's
 classes = np.sort(dummy['Course_id'].unique())
@@ -66,19 +67,24 @@ final = pd.DataFrame()
 for sec in classes:
     for date in dates:
         for low_interval in range(class_starttime,class_endtime):
-            temp = dummy.loc[((dummy['Course_id'] == sec) & (dummy['Time'].dt.hour < (low_interval+1)) &
-                           (dummy['Time'].dt.hour >= low_interval) & (dummy['Time'].dt.date == date))]
-            temp.drop_duplicates(subset ="Name", keep = 'first', inplace = True)
+            temp = dummy.loc[((dummy['Course_id'] == sec) & (dummy['Time'].dt.hour < (low_interval+1)) &(dummy['Time'].dt.hour >= low_interval) & (dummy['Time'].dt.date == date))]
+
+            temp = temp.sort_values(by = 'Time')     
+            temp = temp.loc[(temp['Event name'] == 'Meeting joined')]
+            temp.drop_duplicates(subset ="Roll_no", keep = 'first', inplace = True)
+            
+            temp['duration'] = 60 - temp['Minute'] 
+            
             if low_interval == 13:
                 continue
-            if len(temp) != 0:
+            if temp.empty == False:
                 final = final.append(temp,ignore_index=True)
 final.reset_index(drop=True,inplace= True)
 #providing datafrme to database
 final.to_sql('ATTENDANCE', conn, if_exists='replace', index = True)
 
 #query
-#c.execute('''  SELECT * FROM ATTENDANCE WHERE Roll_no = 1803310178''')
+#c.execute('''  SELECT * FROM ATTENDANCE WHERE Roll_no = 1803310230''')
 #for row in c.fetchall():
     #print(row)
 
