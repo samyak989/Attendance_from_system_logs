@@ -1,6 +1,7 @@
 # RKGIT Attendance
 An application to read data logs from rkgitlms.in and calculate students attendance, and store it in a database.
-
+# Running the WebApp
+Run Tests/test3.py file
 # Libraries Required
 1. datetime
 2. pandas
