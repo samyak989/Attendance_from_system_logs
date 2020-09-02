@@ -14,4 +14,4 @@ class Attendance(db.Model):
 
     # Print output
     def __repr__(self):
-        return f'Attendance({self.dateTime}, {self.studentRollNo}, {self.subjectCode}, {self.attended})'
+        return f'Attendance({self.dateTime}, {self.rollNo}, {self.className}, {self.attended})'

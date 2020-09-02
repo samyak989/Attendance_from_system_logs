@@ -32,28 +32,6 @@ class Attendance(db.Model):
     def __repr__(self):
         return f'Attendance({self.dateTime}, {self.studentRollNo}, {self.subjectCode}, {self.attended})'
 
-
-posts = [
-    {
-        'author' : 'Bhgt',
-        'title' : 'Post 3',
-        'content' : 'I dunno why I posted this.',
-        'date' : 'August 29, 2020'
-    },
-    {
-        'author' : 'Smyk',
-        'title' : 'Post 4',
-        'content' : 'This website sucks.',
-        'date' : 'August 29, 2020'
-    },
-    {
-        'author' : 'Meseeks',
-        'title' : 'Oweee!',
-        'content' : 'EXISTENCE IS PAIN!!',
-        'date' : 'August 1, 2020'
-    }
-]
-
 @app.route("/")
 @app.route("/home")
 @app.route("/home/<rollNo>")
