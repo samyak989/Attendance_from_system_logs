@@ -1,35 +1,16 @@
 from flask import render_template, url_for, flash, redirect
 from AttendanceApp import app, db, bcrypt
 from AttendanceApp.forms import RollNoForm, AdminForm
-from AttendanceApp.models import Student, Attendance
+from AttendanceApp.models import Attendance
 
 hashed_admin_password = '$2b$12$gM2Do7SJHqWjWaNcgOnlNOCaPjJ7oi7RHnmNOITFqhPDyzkIqsCSK' 
-
-posts = [
-    {
-        'author' : 'Bhgt',
-        'title' : 'Post 3',
-        'content' : 'I dunno why I posted this.',
-        'date' : 'August 29, 2020'
-    },
-    {
-        'author' : 'Smyk',
-        'title' : 'Post 4',
-        'content' : 'This website sucks.',
-        'date' : 'August 29, 2020'
-    },
-    {
-        'author' : 'Meseeks',
-        'title' : 'Oweee!',
-        'content' : 'EXISTENCE IS PAIN!!',
-        'date' : 'August 1, 2020'
-    }
-]
 
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template('home.html', posts= posts)
+    records = []
+    
+    return render_template('home.html', records= records)
 
 
 @app.route("/about")

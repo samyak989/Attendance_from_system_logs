@@ -2,29 +2,54 @@
 
 {% block content %}
     <div class= "jumbotron p-4">
-        {% if records|length > 0: %}
-        <h1>{{ records[0][5] }}</h1>
-        <p>{{ records[0][4] }}</p>
+        {% if records|length > 0 %}
+            <h1>All Records for {{ records[0][9] }}-{{ records[0][8] }}-{{ records[0][7] }}</h1>
+            <p>RKGIT Attendance</p>
         {% else %}
-        <h1>Record not found</h1>
-        <p>Try entering a valid roll no. or contact the admin.</p>
+            <h1>Nothing to show</h1>
+            <p>Fill search form to view records</p>
         {% endif %}
+
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            {{ downloadForm.hidden_tag() }}
+            
+            <fieldset class= "form-group">
+                
+                <legend class= "border-bottom mb-4">Search Records</legend>
+                <div class= "form-group">
+                    {{ form.date.label }}
+                    {{ form.date(class= "datepicker") }}
+                    {{ form.fromTime.label }}
+                    {{ form.fromTime(class= "timepicker") }}
+                    {{ form.toTime.label }}
+                    {{ form.toTime(class= "timepicker") }}
+                </div>
+
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class= "btn btn-outline-primary") }}
+                {% if records|length > 0 %}
+                {{ downloadForm.submit(class= "btn btn-outline-primary") }}
+                {% endif %}
+            </div>
+        </form>
     </div>
     <div class="card p-2">
     <table class= "table" data-toggle= "table" data-search= "true">
         <thead class= "thead-light p-2">
         <tr>
-            <th>Date</th>
-            <th>Time Joined</th>
-            <th>Duration</th>
+            <th>Name</th>
+            <th>Roll No</th>
             <th>Class</th>
+            <th>Time</th>
+            <th>Duration</th>
         </tr>
         </thead>
         {% for record in records %}
             <tr>
-                <th>{{ record[9] }}-{{ record[8] }}-{{ record[7] }}</th>
-                <th>{{ record[-3] }}:{{ record[-2] }}</th>
-                <th>{{ record[-1] }}</th>
+                <th>{{ record[5] }}</th>
+                <th>{{ record[4] }}</th>
                 {% if record[6] == 29 %}
                 <th>CSE 4(C+D)</th>
                 {% elif record[6] == 28 %}
@@ -78,6 +103,8 @@
                 {% else %}
                 <th>Course ID: {{ record[6] }}</th>
                 {% endif %}
+                <th>{{ record[10] }}:{{ record[11] }}</th>
+                <th>{{ record[-1] }}</th>
             </tr>
         {% endfor %}
     </table>
