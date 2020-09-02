@@ -3,8 +3,8 @@
 {% block content %}
     <div class= "jumbotron p-4">
         {% if records|length > 0: %}
-        <h1>{{ records[0][5] }}</h1>
-        <p>{{ records[0][4] }}</p>
+        <h1>{{ records[0].name }}</h1>
+        <p>{{ records[0].rollNo }}</p>
         {% else %}
         <h1>Record not found</h1>
         <p>Try entering a valid roll no. or contact the admin.</p>
@@ -18,66 +18,16 @@
             <th>Time Joined</th>
             <th>Duration</th>
             <th>Class</th>
+            <th>Attended</th>
         </tr>
         </thead>
         {% for record in records %}
             <tr>
-                <th>{{ record[9] }}-{{ record[8] }}-{{ record[7] }}</th>
-                <th>{{ record[-3] }}:{{ record[-2] }}</th>
-                <th>{{ record[-1] }}</th>
-                {% if record[6] == 29 %}
-                <th>CSE 4(C+D)</th>
-                {% elif record[6] == 28 %}
-                <th>CSE 4D</th>
-                {% elif record[6] == 27 %}
-                <th>CSE 4C</th>
-                {% elif record[6] == 32 %}
-                <th>CSE 4(A+B) 1</th>
-                {% elif record[6] == 30 %}
-                <th>CSE 4(A+B)</th>
-                {% elif record[6] == 26 %}
-                <th>CSE 4B</th>
-                {% elif record[6] == 25 %}
-                <th>CSE 4A</th>
-                {% elif record[6] == 31 %}
-                <th>CSE 3(C+D) 1</th>
-                {% elif record[6] == 24 %}
-                <th>CSE 3(C+D)</th>
-                {% elif record[6] == 22 %}
-                <th>CSE 3D</th>
-                {% elif record[6] == 21 %}
-                <th>CSE 3C</th>
-                {% elif record[6] == 60 %}
-                <th>CSE 3(A+B) 1</th>
-                {% elif record[6] == 23 %}
-                <th>CSE 3(A+B)</th>
-                {% elif record[6] == 20 %}
-                <th>CSE 3B</th>
-                {% elif record[6] == 19 %}
-                <th>CSE 3A</th>
-                {% elif record[6] == 18 %}
-                <th>CSE 2(C+D)</th>
-                {% elif record[6] == 16 %}
-                <th>CSE 2D</th>
-                {% elif record[6] == 15 %}
-                <th>CSE 2C</th>
-                {% elif record[6] == 17 %}
-                <th>CSE 2(A+B)</th>
-                {% elif record[6] == 14 %}
-                <th>CSE 2B</th>
-                {% elif record[6] == 13 %}
-                <th>CSE 2A</th>
-                {% elif record[6] == 122 %}
-                <th>ME 3C</th>
-                {% elif record[6] == 118 %}
-                <th>ME 3A</th>
-                {% elif record[6] == 33 %}
-                <th>CE 2A</th>
-                {% elif record[6] == 39 %}
-                <th>IT 2A</th>
-                {% else %}
-                <th>Course ID: {{ record[6] }}</th>
-                {% endif %}
+                <th>{{ record.dateTime.day }}-{{ record.dateTime.month }}-{{ record.dateTime.year }}</th>
+                <th>{{ record.dateTime.hour }}:{{ record.dateTime.minute }}</th>
+                <th>{{ record.duration }}</th>
+                <th>{{ record.className }}</th>
+                <th>{{ record.attended }}</th>
             </tr>
         {% endfor %}
     </table>

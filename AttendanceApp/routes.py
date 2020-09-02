@@ -35,6 +35,9 @@ def admin_login():
 @app.route("/home")
 @app.route("/home/<inputRollNo>")
 def home(inputRollNo= 0):
+    if inputRollNo == 0:
+        return redirect(url_for('login'))
+    
     records = Attendance.query.filter_by(rollNo= inputRollNo).all()
 
     return render_template('home.html', records= records)
@@ -48,8 +51,21 @@ def show_all():
     records = []
     
     if form.validate_on_submit():
-        
-        records = Attendance.query.filter(Attendance.dateTime == datetime(year= form.date.data.year, month= form.date.data.month, day= form.date.data.day)).all()
+        fromDateTime = datetime(
+            year= form.date.data.year,
+            month= form.date.data.month,
+            day= form.date.data.day,
+            hour= form.fromTime.data.hour,
+            minute= form.fromTime.data.minute
+            )
+        toDateTime = datetime(
+            year= form.date.data.year,
+            month= form.date.data.month,
+            day= form.date.data.day,
+            hour= form.toTime.data.hour,
+            minute= form.toTime.data.minute
+            )
+        records = Attendance.query.filter(Attendance.dateTime >= fromDateTime, Attendance.dateTime <= toDateTime).all()
         
         print('Records fetched of length: '+str(len(records)))
     print('sending new page')
